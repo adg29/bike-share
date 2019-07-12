@@ -2,32 +2,27 @@
 
 ## Data schema outline for basic bike sharing system
 ```
-let bike = {
+### Bike
+
 	_id,
 	_station, //LastDocked,
 	status: ['active', 'docked', 'disabled']
-};
-
-let stations = {
+### Stations
 	_id,
 	lat,
 	long,
 	name,
 	regions
-};
 
-
-let user = {
+### Users
 	_id,
 	_bike, //checked out, reference
-};
 
-let trip = {
+### Trips
 	_user, //reference
 	_startStation,
 	_endStation,
 	_bike,
 	startTime,
 	endTime
-};
 ```
