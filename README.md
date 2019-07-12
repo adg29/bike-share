@@ -1,6 +1,6 @@
 # Bike Share 
 
-## Shchema Outline for Bike Sharing basic data model
+## Data schema outline for basic bike sharing system
 ```
 let bike = {
 	_id,
