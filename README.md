@@ -1,7 +1,7 @@
 # Bike Share 
 
 ## Data schema outline for basic bike sharing system
-```
+
 ### Bike
 
 	_id,
@@ -25,4 +25,4 @@
 	_bike,
 	startTime,
 	endTime
-```
+
