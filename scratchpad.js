@@ -1,39 +1,67 @@
-
-
-const main = async () => {
-	let db = require('./seed.js');
+let BikeShare = (db) => {
 	console.log(`Seeded bike share with ${JSON.stringify(db, null, 5)}`);
 
-	const getTripData = async (_trip) => {
-		let userForTrip = await findUserTrip(_trip);
-	};
+    const userIsClear = async (_user) => {
+        let user = db.Users.find(user => user._id == _user);
+        if (user && !user._bike) {
+        	return user;	
+        } else {
+        	return false;
+        }
+    };
 
-	const findUserForTrip = (_trip) => {
-		// return db.Trips.find((_trip) => _user._id === _idLookup).populate('_user');
-	}
-
-	const userCheckoutBike = async (_user, _startStation, _bike) => {
-		let userInitiatingCheckout = db.Users.find(user => user._id === _user);
-		if (userInitiatingCheckout && !userInitiatingCheckout._bikeCheckedOut) {
-			let tripStartMetadata = {
-				_user: _user,
-				_startStation: _startStation,
-				_bike: _bike,
-				startTime: new Date()
-			};
-
-			db.Trips.push(tripStartMetadata);
-			console.log(tripStartMetadata);
-			return Promise.resolve({trip: tripStartMetadata, trips: db.Trips});
+	const bikeIsAvailable = async (_bike) => {
+		let bikeRequested = db.Bikes.find(bike => bike._id == _bike);
+		if (bikeRequested && bikeRequested.status == 'docked') {
+			return bikeRequested;
 		} else {
-			return Promise.reject(new Error('Not authorized to checkout bikes and initiate trip'));
+			return false;
 		}
 	};
 
-	const checkoutRequest = await userCheckoutBike('u1', 's1', 'b1');
-	console.log(`New trip started`);
-	console.log(`${JSON.stringify(checkoutRequest.trip, null, 5)}`);
+	const bikeCheckout = async (_user, _startStation, _bike) => {
+		let bikeRequested = db.Bikes.find(bike => bike._id == _bike);
+		bikeRequested.status = 'active';
+        bikeRequested._station = _startStation;
+        bikeRequested._user = _user;
+		return bikeRequested;
+	};
+
+	const tripStart = async (_user, _startStation, _bike) => {
+		let tripStartMetadata = {
+			_user: _user,
+			_startStation: _startStation,
+			_bike: _bike,
+			startTime: new Date()
+		};
+		db.Trips.push(tripStartMetadata);
+		console.log(tripStartMetadata);
+		return Promise.resolve({trip: tripStartMetadata, trips: db.Trips});
+	};
+
+    const requestBikeCheckout = async (userRequestingCheckoutId, bikeToCheckoutId) => {
+        const bikeAvailable = await bikeIsAvailable(bikeToCheckoutId);
+        const userWithAccess = await userIsClear(userRequestingCheckoutId);
+        if (!userWithAccess) {
+            throw new Error(`User ${userRequestingCheckoutId} is not clear to checkout a bike`);``
+        } else if (bikeAvailable) {
+            userWithAccess._bike = bikeAvailable._id;
+            const bikeCheckoutRequest = await bikeCheckout('u1', 's1', 'b1');
+            const tripStartRequest = await tripStart('u1', 's1', 'b1');
+
+            console.log(`User updated ${JSON.stringify(userWithAccess, null, 5)}`)
+            console.log(`Bike updated ${JSON.stringify(bikeAvailable, null, 5)}`)
+            console.log(`New trip started ${JSON.stringify(tripStartRequest.trip, null, 5)}`)
+        } else {
+            throw new Error(`Bike ${bikeToCheckoutId} is not available for another trip`);
+        }
+    };
+
+    const api = {
+    	requestBikeCheckout: requestBikeCheckout
+    };
+    return api;
 
 };
 
-main();
+module.exports = BikeShare;
