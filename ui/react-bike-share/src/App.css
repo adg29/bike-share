@@ -1,0 +1,43 @@
+.App {
+}
+
+.app {
+  background: #aaa;
+  padding: 30px;
+}
+
+.list {
+  border-radius: 4px;
+  display: flex;
+
+}
+
+.trips{
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.item{
+  padding: 1em;
+  padding-bottom: 32%;
+  margin-bottom: 2%;
+  position: relative;
+  background: #fff;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+  align-items: center;
+}
+
+.bike{
+  flex-grow: 1;
+  width: 32%;
+  height: 100px;
+}
+
+.trip {
+
+}
+
+.bike + .bike{
+  margin-left: 2%;
+}
