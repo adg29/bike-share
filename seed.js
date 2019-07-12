@@ -16,33 +16,33 @@ let Seed = {
 	Bikes: [
 		{
 			_id: 'b1',
-			stationLastDocked: 's1',
+			_station: 's1',
 			status: 'docked'
 		},
 		{
 			_id: 'b2',
-			stationLastDocked: 's1',
+			_station: 's1',
 			status: 'docked'
 		},
 		{
 			_id: 'b3',
-			stationLastDocked: 's2',
+			_station: 's2',
 			status: 'docked'
 		},
 		{
 			_id: 'b4',
-			stationLastDocked: 's2',
+			_station: 's2',
 			status: 'docked'
 		}
 	],
 	Users: [
 		{
 			_id: 'u1',
-			_bikeCheckedOut: null
+			_bike: null
 		},
 		{
 			_id: 'u2',
-			_bikeCheckedOut: null
+			_bike: null
 		}
 	],
 	Trips: [
