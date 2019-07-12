@@ -1,35 +1,32 @@
 # Bike Share 
 
-## Pseudo Code for Bike Sharing Data model
-```
-let bike = {
-	_id,
-	stationLastDocked,
-	dockedStatus: ['active', 'docked', 'disabled']
-};
+## Data schema outline for basic bike sharing system
 
-let stations = {
+#### Conventions:
+1. References are prefixes with an underscore character, e.g. `_user: 'u1'`
+2. Enums are defined via an array e.g. `status: ['active', 'docked', 'disabled']`
+
+### Bike
+
+	_id,
+	_station, //LastDocked,
+	status: ['active', 'docked', 'disabled']
+### Stations
 	_id,
 	lat,
 	long,
 	name,
-
 	regions
-};
 
-
-let user = {
+### Users
 	_id,
-	_bikeCheckedOut: {type: 'ref'}
-};
+	_bike, //checked out
 
-let trip = {
-	_user: { type: 'ref'},
+### Trips
+	_user, 
 	_startStation,
 	_endStation,
 	_bike,
-
 	startTime,
 	endTime
-};
-```
+
