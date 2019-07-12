@@ -2,6 +2,10 @@
 
 ## Data schema outline for basic bike sharing system
 
+#### Conventions:
+1. References are prefixes with an underscore character, e.g. `_user: 'u1'`
+2. Enums are defined via an array e.g. `status: ['active', 'docked', 'disabled']`
+
 ### Bike
 
 	_id,
@@ -16,7 +20,7 @@
 
 ### Users
 	_id,
-	_bike, //checked out, reference
+	_bike, //checked out
 
 ### Trips
 	_user, //reference
