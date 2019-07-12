@@ -23,7 +23,7 @@
 	_bike, //checked out
 
 ### Trips
-	_user, //reference
+	_user, 
 	_startStation,
 	_endStation,
 	_bike,
