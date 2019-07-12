@@ -1,11 +1,11 @@
 # Bike Share 
 
-## Pseudo Code for Bike Sharing Data model
+## Shchema Outline for Bike Sharing basic data model
 ```
 let bike = {
 	_id,
-	stationLastDocked,
-	dockedStatus: ['active', 'docked', 'disabled']
+	_station, //LastDocked,
+	status: ['active', 'docked', 'disabled']
 };
 
 let stations = {
@@ -13,22 +13,20 @@ let stations = {
 	lat,
 	long,
 	name,
-
 	regions
 };
 
 
 let user = {
 	_id,
-	_bikeCheckedOut: {type: 'ref'}
+	_bike, //checked out, reference
 };
 
 let trip = {
-	_user: { type: 'ref'},
+	_user, //reference
 	_startStation,
 	_endStation,
 	_bike,
-
 	startTime,
 	endTime
 };
