@@ -2,16 +2,24 @@ import React, { useState } from 'react';
 import './App.css';
 import db from './seed.js';
 
-function User({user, index, selectActiveUser}) {
+function User({user, isActiveUser, selectActiveUser}) {
+  let classNames = ["user", "item"]
+  let selectActiveUserButtonLabel = null
+  if (isActiveUser) {
+    selectActiveUserButtonLabel = "Reserving"
+  } else {
+    selectActiveUserButtonLabel = "Start trip"
+  }
+  if (isActiveUser) classNames.push("active")
   return (
-    <div className="user item">
+    <div className={classNames.join(" ")}>
       ID: {user._id}
       <br/>
       <br/>
       {
         (user._bike) ?
           'Current bike {user._bike}' :
-          <button onClick={(e) => selectActiveUser(e, user)}>Start trip as {user._id}</button>
+          <button onClick={(e) => selectActiveUser(e, user)}>{selectActiveUserButtonLabel} as {user._id}</button>
       }
     </div>
   )
@@ -100,14 +108,19 @@ function App() {
         User:
       </h2>
       <div className="users list">
-        {users.map((user, index) => (
-          <User
-            key={index}
-            index={index}
-            user={user}
-            selectActiveUser={selectActiveUser}
-          />
-        ))}
+        {
+          users.map((user, index) => {
+          let isActiveUser = activeUser && user._id === activeUser._id ? true : false;
+          return (
+            <User
+              key={index}
+              index={index}
+              user={user}
+              selectActiveUser={selectActiveUser}
+              isActiveUser={isActiveUser}
+            />
+          )})
+        }
       </div>
       <h2>
       Bikes
