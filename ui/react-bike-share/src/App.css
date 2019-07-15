@@ -1,6 +1,10 @@
 .App {
 }
 
+h2, h3 {
+  clear: both;
+}
+
 .app {
   background: #aaa;
   padding: 30px;
@@ -9,7 +13,10 @@
 .list {
   border-radius: 4px;
   display: flex;
+  height: 100%;
+}
 
+.users {
 }
 
 .trips{
@@ -34,10 +41,11 @@
   height: 100px;
 }
 
-.trip {
-
+.user{
+  height: 10%;
 }
 
+.user + .user,
 .bike + .bike{
   margin-left: 2%;
 }
