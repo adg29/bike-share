@@ -10,7 +10,8 @@
 
 	_id,
 	_station, //LastDocked,
-	status: ['active', 'docked', 'disabled']
+	status: ['active', 'docked', 'disabled'],
+	_user
 ### Stations
 	_id,
 	lat,
