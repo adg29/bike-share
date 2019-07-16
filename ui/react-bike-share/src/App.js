@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import './App.css';
 import db from './seed.js';
+import BikeShareAPI from './api.js'
+
+const BikeShare = BikeShareAPI(db);
 
 function User({user, isActiveUser, selectActiveUser}) {
   let classNames = ["user", "item"]
@@ -19,13 +22,13 @@ function User({user, isActiveUser, selectActiveUser}) {
       {
         (user._bike) ?
           'Current bike {user._bike}' :
-          <button onClick={(e) => selectActiveUser(e, user)}>{selectActiveUserButtonLabel} as {user._id}</button>
+          <button onClick={() => selectActiveUser(user)}>{selectActiveUserButtonLabel} as {user._id}</button>
       }
     </div>
   )
 }
 
-const Bike = ({bike, index, activeUser}) => {
+const Bike = ({bike, index, selectBike, activeUser}) => {
   return (
     <div className="bike item">
       ID: {bike._id}
@@ -34,19 +37,19 @@ const Bike = ({bike, index, activeUser}) => {
       <br/>
       {
         bike.status === "active" ?
-        `Last Seen` : `Docked`
+        `Checked out from` : `Docked`
       } @ Station {bike._station}
       <br/>
       {
         (activeUser && bike.status === "docked") ? 
-          (<button>Reserve as {activeUser._id}</button>)
+          (<button onClick={() => selectBike(bike)}>Reserve as {activeUser._id}</button>)
           : ''
       }
     </div>
   )
 }
 
-const Trip = ({trip}) => (
+const Trip = ({trip, index}) => (
   <div className="trip item">
     <pre>
       {JSON.stringify(trip, null, 5)}
@@ -78,22 +81,49 @@ function TripForm({addTrip}) {
 
 function App() {
   const [activeUser, setActiveUser] = useState(null);
-  console.log(`app activeUser ${JSON.stringify(activeUser)}`)
 
   const [users, setUsers] = useState(db.Users);
   const [bikes, setBikes] = useState(db.Bikes);
   const [trips, setTrips] = useState(db.Trips);
 
-  const selectActiveUser = (e, user) => {
-    e.preventDefault();
+  const selectActiveUser = (user) => {
     console.log(`selectActiveUser ${JSON.stringify(user)}`)
-    const lookupSelectedUser = users.find(u => u._id === user._id)
-    if (lookupSelectedUser) {
-      console.log(`found user ${JSON.stringify(lookupSelectedUser)}`)
-      let newActiveUser = {...lookupSelectedUser}
-      setActiveUser(lookupSelectedUser)
+    // const lookupSelectedUser = users.find(u => u._id === user._id)
+    if (user) {
+      // console.log(`found user ${JSON.stringify(lookupSelectedUser)}`)
+      let newActiveUser = {...user}
+      setActiveUser(newActiveUser)
     } else {
       throw new Error(`User ${user._id} not found`)
+    }
+  }
+
+  const selectBike = async (bike, index) => {
+    console.log(`selectBike ${JSON.stringify(bike)}`)
+    const lookupSelectedBike = bikes.find(b => b._id === bike._id)
+    if (lookupSelectedBike) {
+      console.log(`found bike ${JSON.stringify(lookupSelectedBike)}`)
+      let bikeReserveRequest =  await BikeShare.requestBikeCheckout(activeUser._id, bike._station, bike._id)
+      if (bikeReserveRequest) {
+        console.log(bikeReserveRequest)
+
+        const updatedBikes = [...bikes]
+        updatedBikes[index] = bikeReserveRequest.bike
+
+        let updatedUsers = [...users]
+        updatedUsers[activeUser.index] = bikeReserveRequest.user
+
+        let updatedTrips = [...trips]
+
+        console.log('users', updatedUsers, 'bikes', updatedBikes, 'trips', updatedTrips)
+        setUsers(updatedUsers)
+        setBikes(updatedBikes)
+        setTrips(updatedTrips)
+
+        setActiveUser(bikeReserveRequest.user)
+      }
+    } else {
+      throw new Error(`Bike ${bike._id} not found`)
     }
   }
 
@@ -132,6 +162,7 @@ function App() {
             index={index}
             bike={bike}
             activeUser={activeUser}
+            selectBike={selectBike}
           />
         ))}
       </div>
@@ -147,10 +178,6 @@ function App() {
           />
         ))}
       </div>
-      <h3>
-      Log a trip
-      </h3>
-      <TripForm addTrip={addTrip} />
     </div>
   );
 }
