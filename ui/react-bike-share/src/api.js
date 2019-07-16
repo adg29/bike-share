@@ -35,23 +35,28 @@ let BikeShare = (db) => {
 			startTime: new Date()
 		};
 		db.Trips.push(tripStartMetadata);
-		console.log(tripStartMetadata);
+		// console.log(tripStartMetadata);
 		return Promise.resolve({trip: tripStartMetadata, trips: db.Trips});
 	};
 
-    const requestBikeCheckout = async (userRequestingCheckoutId, bikeToCheckoutId) => {
+    const requestBikeCheckout = async (userRequestingCheckoutId, stationRequestingCheckoutId, bikeToCheckoutId) => {
         const bikeAvailable = await bikeIsAvailable(bikeToCheckoutId);
         const userWithAccess = await userIsClear(userRequestingCheckoutId);
         if (!userWithAccess) {
-            throw new Error(`User ${userRequestingCheckoutId} is not clear to checkout a bike`);``
+           throw new Error(`User ${userRequestingCheckoutId} is not clear to checkout a bike`);
         } else if (bikeAvailable) {
             userWithAccess._bike = bikeAvailable._id;
-            const bikeCheckoutRequest = await bikeCheckout('u1', 's1', 'b1');
-            const tripStartRequest = await tripStart('u1', 's1', 'b1');
+            const bikeCheckoutRequest = await bikeCheckout(userRequestingCheckoutId, stationRequestingCheckoutId, bikeToCheckoutId);
+            const tripStartRequest = await tripStart(userRequestingCheckoutId, stationRequestingCheckoutId, bikeToCheckoutId);
 
             console.log(`User updated ${JSON.stringify(userWithAccess, null, 5)}`)
-            console.log(`Bike updated ${JSON.stringify(bikeAvailable, null, 5)}`)
+            console.log(`Bike updated ${JSON.stringify(bikeCheckoutRequest, null, 5)}`)
             console.log(`New trip started ${JSON.stringify(tripStartRequest.trip, null, 5)}`)
+            return {
+            	user: userWithAccess,
+            	bike: bikeAvailable,
+            	trip: tripStartRequest.trip
+            }
         } else {
             throw new Error(`Bike ${bikeToCheckoutId} is not available for another trip`);
         }
