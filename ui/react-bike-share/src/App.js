@@ -5,33 +5,33 @@ import BikeShareAPI from './api.js'
 
 const BikeShare = BikeShareAPI(db);
 
-function User({user, isActiveUser, activeTrip, selectActiveUser}) {
-  let classNames = ["user", "item"]
-  let selectActiveUserButtonLabel = null
-  if (isActiveUser) {
-    selectActiveUserButtonLabel = "Reserving"
-  } else {
-    selectActiveUserButtonLabel = "Start trip"
-  }
-  if (isActiveUser) classNames.push("active")
-  return (
-    <div className={classNames.join(" ")}>
-      ID: {user._id}
-      <br/>
-      <br/>
-      {
-        (user._bike && user._trip) ?
-          (`Current bike ${user._bike}`) : ''
-      }
-      <br/>
-      <button 
-        onClick={() => selectActiveUser(user)}
-        disabled={(activeTrip && activeTrip._user !== user._id) ? 'disabled' : ''}
-      >
-            {selectActiveUserButtonLabel} as {user._id}
-        </button>
-    </div>
-  )
+const User({user, isActiveUser, activeTrip, selectActiveUser}) {
+    let classNames = ["user", "item"]
+    let selectActiveUserButtonLabel = null
+    if (isActiveUser) {
+        selectActiveUserButtonLabel = "Reserving"
+    } else {
+        selectActiveUserButtonLabel = "Start trip"
+    }
+    if (isActiveUser) classNames.push("active")
+    return (
+        <div className={classNames.join(" ")}>
+            ID: {user._id}
+            <br/>
+            <br/>
+            {
+                (user._bike && user._trip) ?
+                    (`Current bike ${user._bike}`) : ''
+            }
+            <br/>
+            <button 
+                onClick={() => selectActiveUser(user)}
+                disabled={(activeTrip && activeTrip._user !== user._id) ? 'disabled' : ''}
+            >
+                {selectActiveUserButtonLabel} as {user._id}
+            </button>
+        </div>
+    )
 }
 
 const Bike = ({bike, index, isActiveBike, activeUser, activeTrip, updateBikeReservation}) => {
