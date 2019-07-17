@@ -46,7 +46,7 @@ let Seed = {
             _user: 'u1',
             _startStation: 's1',
             _endStation: 's2',
-            _bike: 's1',
+            _bike: 'b1',
             startDateTime: Date.UTC(2019, 7, 11),//  09:00'
             endDateTime: Date.UTC(2019, 7, 12)//  10:00'
         },
@@ -55,7 +55,7 @@ let Seed = {
             _user: 'u1',
             _startStation: 's1',
             _endStation: 's2',
-            _bike: 's1',
+            _bike: 'b1',
             startDateTime: Date.UTC(2019, 7, 1),//  21:00'
             endDateTime: Date.UTC(2019, 7, 2)//  22:00'
         }

@@ -70,8 +70,15 @@ let BikeShare = (db) => {
         Promise.resolve(bikeRequested)
     };
 
+    const tripIdFromDB = () => {
+        const tripIds = db.Trips.map(t => parseInt(t._id.substring(1)));
+        let largestId = Math.max(...tripIds)
+        return `t${(largestId + 1)}`
+    }
+
     const tripStart = async (_user, _startStation, _bike) => {
         let tripStartMetadata = {
+            _id: tripIdFromDB(),
             _user: _user,
             _startStation: _startStation,
             _bike: _bike,

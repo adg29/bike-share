@@ -63,13 +63,17 @@ const Station = ({station, index}) => (
   </div>
 )
 
-const Trip = ({trip, index}) => (
-  <div className="trip item">
-    <pre>
-      {JSON.stringify(trip, null, 5)}
-    </pre>
-  </div>
-)
+const Trip = ({trip, index, isActiveTrip, activeUser}) => {
+    let classNames = ["trip", "item"]
+    if (isActiveTrip) classNames.push("active")
+    return (
+        <div className={classNames.join(" ")}>
+            <pre>
+            {JSON.stringify(trip, null, 5)}
+            </pre>
+        </div>
+    )
+}
 
 function App() {
   const [activeUser, setActiveUser] = useState(null);
@@ -117,8 +121,10 @@ function App() {
 
         if (ACTION === BikeShare.ACTIONS.RESERVE) {
           setActiveBike(lookupSelectedBike)
-        } else {
+          setActiveTrip(bikeReserveRequest.trip)
+        } else if (ACTION === BikeShare.ACTIONS.RETURN) {
           setActiveBike(null)
+          setActiveTrip(null)
         }
 
         let updatedUsers = [...users]
@@ -176,17 +182,22 @@ function App() {
           )})
       }
       </div>
-      <h2>
+        <h2>
         Trips
-      </h2>
-      <div className="trips list">
-        {trips.map((trip, index) => (
-          <Trip
-            key={index}
-            index={index}
-            trip={trip}
-          />
-        ))}
+        </h2>
+        <div className="trips list">
+        {trips.sort((ta,tb) => tb._id.substring(1) - ta._id.substring(1)).map((trip, index) => {
+            let isActiveTrip = activeTrip && trip._id === activeTrip._id ? true : false
+            return (
+                <Trip
+                    key={index}
+                    index={index}
+                    trip={trip}
+                    isActiveTrip={isActiveTrip}
+                    activeUser={activeUser}
+                />
+            )})
+        }
       </div>
     </div>
   );
