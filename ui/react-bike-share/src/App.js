@@ -71,28 +71,6 @@ const Trip = ({trip, index}) => (
   </div>
 )
 
-function TripForm({addTrip}) {
-  const [value, setValue] = useState("");
-
-  const handleSubmit = e => {
-    e.preventDefault();
-    if (!value) return;
-    addTrip(value);
-    setValue("");
-  }
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input 
-        type="text"
-        className="input"
-        value={value}
-        onChange={e => setValue(e.target.value)}
-      />
-    </form>
-  );
-}
-
 function App() {
   const [activeUser, setActiveUser] = useState(null);
   const [activeBike, setActiveBike] = useState(null);
@@ -158,11 +136,6 @@ function App() {
     } else {
       throw new Error(`Bike ${bike._id} not found`)
     }
-  }
-
-  const addTrip = tripMeatdata => {
-    const newTrips = [...trips, {tripMeatdata}]
-    setTrips(newTrips)
   }
 
   return (

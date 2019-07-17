@@ -7,11 +7,12 @@
 2. Enums are defined via an array e.g. `status: ['active', 'docked', 'disabled']`
 
 ### Bike
-
 	_id,
 	_station, //LastDocked,
 	status: ['active', 'docked', 'disabled'],
-	_user
+	_user,
+	_trip
+
 ### Stations
 	_id,
 	lat,
@@ -21,9 +22,10 @@
 
 ### Users
 	_id,
-	_bike, //checked out
+	_trip
 
 ### Trips
+	_id,
 	_user, 
 	_startStation,
 	_endStation,

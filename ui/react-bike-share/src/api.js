@@ -1,5 +1,5 @@
 let BikeShare = (db) => {
-    console.log(`Seeded bike share with ${JSON.stringify(db, null, 5)}`);
+    // console.log(`Seeded bike share with ${JSON.stringify(db, null, 5)}`);
 
     const _ACTIONS = {
             RESERVE: 'reserve',
@@ -21,17 +21,17 @@ let BikeShare = (db) => {
     };
 
     const userIsActive = async (_user, _bike) => {
-        let user = db.Users.find(user => user._id == _user);
+        let user = db.Users.find(user => user._id === _user);
         if (user && user._bike === _bike) {
-            return user;    
+            return user;
         } else {
             return false;
         }
     };
 
     const bikeIsAvailable = async (_bike) => {
-        let bikeRequested = db.Bikes.find(bike => bike._id == _bike);
-        if (bikeRequested && bikeRequested.status == 'docked') {
+        let bikeRequested = db.Bikes.find(bike => bike._id === _bike);
+        if (bikeRequested && bikeRequested.status === _STATUS.DOCKED) {
             return Promise.resolve(bikeRequested);
         } else {
             return Promise.resolve(false);
@@ -39,8 +39,8 @@ let BikeShare = (db) => {
     };
 
     const bikeIsActive = async (_bike) => {
-        let bikeRequested = db.Bikes.find(bike => bike._id == _bike);
-        if (bikeRequested && bikeRequested.status == 'active') {
+        let bikeRequested = db.Bikes.find(bike => bike._id === _bike);
+        if (bikeRequested && bikeRequested.status === _STATUS.ACTIVE) {
             return bikeRequested;
         } else {
             return false;
@@ -61,7 +61,7 @@ let BikeShare = (db) => {
                 bikeRequested._user = null;
                 break;
             default:
-                Promise.reject(new Error('Error taking reservation action ${ACTION}'))
+                Promise.reject(new Error(`Error taking reservation action ${ACTION}`))
                 break;
         }
 
