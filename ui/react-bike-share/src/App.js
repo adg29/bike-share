@@ -21,19 +21,20 @@ function User({user, isActiveUser, selectActiveUser}) {
       <br/>
       {
         (user._bike) ?
-          'Current bike {user._bike}' :
+          (`Current bike ${user._bike}`) :
           <button onClick={() => selectActiveUser(user)}>{selectActiveUserButtonLabel} as {user._id}</button>
       }
     </div>
   )
 }
 
-const Bike = ({bike, index, selectBike, activeUser}) => {
+const Bike = ({bike, index, isActiveBike, activeUser, updateBikeReservation}) => {
+  let classNames = ["bike", "item"]
+  if (isActiveBike) classNames.push("active")
   return (
-    <div className="bike item">
+    <div className={classNames.join(" ")}>
       ID: {bike._id}
       <br/>
-      {/*Status: {bike.status}*/}
       <br/>
       {
         bike.status === "active" ?
@@ -42,12 +43,25 @@ const Bike = ({bike, index, selectBike, activeUser}) => {
       <br/>
       {
         (activeUser && bike.status === "docked") ? 
-          (<button onClick={() => selectBike(bike)}>Reserve as {activeUser._id}</button>)
+          (<button onClick={() => updateBikeReservation(BikeShare.ACTIONS.RESERVE, bike, index)}>Reserve as {activeUser._id}</button>)
+          : ''
+      }
+      {
+        (activeUser && bike.status === "active") ? 
+          (<button onClick={() => updateBikeReservation(BikeShare.ACTIONS.RETURN, bike, index)}>Return as {activeUser._id}</button>)
           : ''
       }
     </div>
   )
 }
+
+const Station = ({station, index}) => (
+  <div className="station item">
+    <pre>
+      {JSON.stringify(station, null, 5)}
+    </pre>
+  </div>
+)
 
 const Trip = ({trip, index}) => (
   <div className="trip item">
@@ -81,9 +95,12 @@ function TripForm({addTrip}) {
 
 function App() {
   const [activeUser, setActiveUser] = useState(null);
+  const [activeBike, setActiveBike] = useState(null);
+  const [activeTrip, setActiveTrip] = useState(null);
 
   const [users, setUsers] = useState(db.Users);
   const [bikes, setBikes] = useState(db.Bikes);
+  const [stations, setStations] = useState(db.Stations);
   const [trips, setTrips] = useState(db.Trips);
 
   const selectActiveUser = (user) => {
@@ -98,22 +115,38 @@ function App() {
     }
   }
 
-  const selectBike = async (bike, index) => {
-    console.log(`selectBike ${JSON.stringify(bike)}`)
+  const updateBikeReservation = async (ACTION, bike, index) => {
+    console.log(`updateBikeReservation ${ACTION} ${JSON.stringify(bike)}`)
     const lookupSelectedBike = bikes.find(b => b._id === bike._id)
     if (lookupSelectedBike) {
       console.log(`found bike ${JSON.stringify(lookupSelectedBike)}`)
-      let bikeReserveRequest =  await BikeShare.requestBikeCheckout(activeUser._id, bike._station, bike._id)
+      let stationForAction = null
+      let bikeReserveRequest = null
+      if (ACTION === BikeShare.ACTIONS.RESERVE) {
+        stationForAction = bike._station
+        bikeReserveRequest =  await BikeShare.requestBikeCheckout(activeUser._id, stationForAction, bike._id)
+      } else {
+        stationForAction = stations[Math.floor(Math.random() * stations.length)]._id
+        bikeReserveRequest =  await BikeShare.requestBikeReturn(activeUser._id, stationForAction, bike._id)
+      }
+
       if (bikeReserveRequest) {
+        console.log('bikeReserveRequest')
         console.log(bikeReserveRequest)
 
         const updatedBikes = [...bikes]
         updatedBikes[index] = bikeReserveRequest.bike
 
+        if (ACTION === BikeShare.ACTIONS.RESERVE) {
+          setActiveBike(lookupSelectedBike)
+        } else {
+          setActiveBike(null)
+        }
+
         let updatedUsers = [...users]
         updatedUsers[activeUser.index] = bikeReserveRequest.user
 
-        let updatedTrips = [...trips]
+        let updatedTrips = [...db.Trips]
 
         console.log('users', updatedUsers, 'bikes', updatedBikes, 'trips', updatedTrips)
         setUsers(updatedUsers)
@@ -146,8 +179,8 @@ function App() {
               key={index}
               index={index}
               user={user}
-              selectActiveUser={selectActiveUser}
               isActiveUser={isActiveUser}
+              selectActiveUser={selectActiveUser}
             />
           )})
         }
@@ -156,15 +189,19 @@ function App() {
       Bikes
       </h2>
       <div className="bikes list">
-        {bikes.map((bike, index) => (
-          <Bike
-            key={index}
-            index={index}
-            bike={bike}
-            activeUser={activeUser}
-            selectBike={selectBike}
-          />
-        ))}
+        {bikes.map((bike, index) => {
+          let isActiveBike = activeBike && bike._id === activeBike._id ? true : false
+          return (
+            <Bike
+              key={index}
+              index={index}
+              bike={bike}
+              isActiveBike={isActiveBike}
+              activeUser={activeUser}
+              updateBikeReservation={updateBikeReservation}
+            />
+          )})
+      }
       </div>
       <h2>
         Trips
