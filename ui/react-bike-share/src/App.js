@@ -35,38 +35,38 @@ const User = ({user, isActiveUser, activeTrip, selectActiveUser}) => {
 }
 
 const Bike = ({bike, index, isActiveBike, activeUser, activeTrip, updateBikeReservation}) => {
-  let classNames = ["bike", "item"]
-  if (isActiveBike) classNames.push("active")
-  return (
-    <div className={classNames.join(" ")}>
-      ID: {bike._id}
-      <br/>
-      <br/>
-      {
-        bike.status === "active" ?
-        `Checked out from` : `Docked`
-      } @ Station {bike._station}
-      <br/>
-      {
-        (activeUser && !activeTrip && bike.status === "docked") ? 
-          (<button onClick={() => updateBikeReservation(BikeShare.ACTIONS.RESERVE, bike, index)}>Reserve as {activeUser._id}</button>)
-          : ''
-      }
-      {
-        (activeUser && bike.status === "active") ? 
-          (<button onClick={() => updateBikeReservation(BikeShare.ACTIONS.RETURN, bike, index)}>Return as {activeUser._id}</button>)
-          : ''
-      }
-    </div>
-  )
+    let classNames = ["bike", "item"]
+    if (isActiveBike) classNames.push("active")
+    return (
+        <div className={classNames.join(" ")}>
+            ID: {bike._id}
+            <br/>
+            <br/>
+            {
+                bike.status === "active" ?
+                `Checked out from` : `Docked`
+            } @ Station {bike._station}
+            <br/>
+            {
+                (activeUser && !activeTrip && bike.status === "docked") ? 
+                    (<button onClick={() => updateBikeReservation(BikeShare.ACTIONS.RESERVE, bike, index)}>Reserve as {activeUser._id}</button>)
+                    : ''
+            }
+            {
+                (activeUser && bike.status === "active") ? 
+                    (<button onClick={() => updateBikeReservation(BikeShare.ACTIONS.RETURN, bike, index)}>Return as {activeUser._id}</button>)
+                    : ''
+            }
+        </div>
+    )
 }
 
 const Station = ({station, index}) => (
-  <div className="station item">
-    <pre>
-      {JSON.stringify(station, null, 5)}
-    </pre>
-  </div>
+    <div className="station item">
+        <pre>
+            {JSON.stringify(station, null, 5)}
+        </pre>
+    </div>
 )
 
 const Trip = ({trip, index, isActiveTrip, activeUser}) => {
