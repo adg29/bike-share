@@ -5,7 +5,7 @@ import BikeShareAPI from './api.js'
 
 const BikeShare = BikeShareAPI(db);
 
-function User({user, isActiveUser, selectActiveUser}) {
+function User({user, isActiveUser, activeTrip, selectActiveUser}) {
   let classNames = ["user", "item"]
   let selectActiveUserButtonLabel = null
   if (isActiveUser) {
@@ -20,15 +20,21 @@ function User({user, isActiveUser, selectActiveUser}) {
       <br/>
       <br/>
       {
-        (user._bike) ?
-          (`Current bike ${user._bike}`) :
-          <button onClick={() => selectActiveUser(user)}>{selectActiveUserButtonLabel} as {user._id}</button>
+        (user._bike && user._trip) ?
+          (`Current bike ${user._bike}`) : ''
       }
+      <br/>
+      <button 
+        onClick={() => selectActiveUser(user)}
+        disabled={(activeTrip && activeTrip._user !== user._id) ? 'disabled' : ''}
+      >
+            {selectActiveUserButtonLabel} as {user._id}
+        </button>
     </div>
   )
 }
 
-const Bike = ({bike, index, isActiveBike, activeUser, updateBikeReservation}) => {
+const Bike = ({bike, index, isActiveBike, activeUser, activeTrip, updateBikeReservation}) => {
   let classNames = ["bike", "item"]
   if (isActiveBike) classNames.push("active")
   return (
@@ -42,7 +48,7 @@ const Bike = ({bike, index, isActiveBike, activeUser, updateBikeReservation}) =>
       } @ Station {bike._station}
       <br/>
       {
-        (activeUser && bike.status === "docked") ? 
+        (activeUser && !activeTrip && bike.status === "docked") ? 
           (<button onClick={() => updateBikeReservation(BikeShare.ACTIONS.RESERVE, bike, index)}>Reserve as {activeUser._id}</button>)
           : ''
       }
@@ -160,6 +166,7 @@ function App() {
               user={user}
               isActiveUser={isActiveUser}
               selectActiveUser={selectActiveUser}
+              activeTrip={activeTrip}
             />
           )})
         }
@@ -177,6 +184,7 @@ function App() {
               bike={bike}
               isActiveBike={isActiveBike}
               activeUser={activeUser}
+              activeTrip={activeTrip}
               updateBikeReservation={updateBikeReservation}
             />
           )})
