@@ -1,52 +1,48 @@
 let Seed = {
-	Stations: [
-		{
-			_id: 's1',
-			lat: 34,
-			long: 23,
-			name: 'Station 1'
-		},
-		{
-			_id: 's2',
-			lat: 54,
-			long: 63,
-			name: 'Station 2'
-		}
-	],
+	Stations: [],
 	Bikes: [
 		{
 			_id: 'b1',
 			_station: 's1',
-			status: 'docked'
+			status: 'docked',
+			_user: null,
+			_trip: null
 		},
 		{
 			_id: 'b2',
 			_station: 's1',
-			status: 'docked'
+			status: 'docked',
+			_user: null,
+			_trip: null
 		},
 		{
 			_id: 'b3',
 			_station: 's2',
-			status: 'docked'
+			status: 'docked',
+			_user: null,
+			_trip: null
 		},
 		{
 			_id: 'b4',
 			_station: 's2',
-			status: 'docked'
+			status: 'docked',
+			_user: null,
+			_trip: null
 		}
 	],
 	Users: [
 		{
 			_id: 'u1',
-			_bike: null
+			_trip: null
 		},
 		{
 			_id: 'u2',
-			_bike: null
+			_trip: null
 		}
 	],
 	Trips: [
 		{
+			_id: 't1',
 			_user: 'u1',
 			_startStation: 's1',
 			_endStation: 's2',
@@ -55,6 +51,7 @@ let Seed = {
 			endDateTime: Date.UTC(2019, 7, 12)//  10:00'
 		},
 		{
+			_id: 't2',
 			_user: 'u1',
 			_startStation: 's1',
 			_endStation: 's2',
@@ -64,5 +61,15 @@ let Seed = {
 		}
 	]
 };
+
+Seed.Stations = Array(10).fill({})
+for (let i in Seed.Stations) {
+	Seed.Stations[i] = {
+		_id: `s${i}`,
+		lat: 54,
+		long: 63,
+		name: `Station ${i}`
+	}
+}
 
 module.exports = Seed;
