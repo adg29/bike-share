@@ -5,7 +5,7 @@ import BikeShareAPI from './api.js'
 
 const BikeShare = BikeShareAPI(db);
 
-const User({user, isActiveUser, activeTrip, selectActiveUser}) {
+const User = ({user, isActiveUser, activeTrip, selectActiveUser}) => {
     let classNames = ["user", "item"]
     let selectActiveUserButtonLabel = null
     if (isActiveUser) {
